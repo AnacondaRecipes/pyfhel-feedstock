@@ -1,0 +1,59 @@
+{% set name = "Pyfhel" %}
+{% set version = "3.4.2" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://pypi.io/packages/source/{{ name[0]|lower }}/{{ name|lower }}/{{ name }}-{{ version }}.tar.gz
+  sha256: fa41664f8815b27f6347821f6363a7516fa84f50570816d8f292f2c22f88f88c
+  # patches:
+  #   - patches/0001-no-system-include.patch
+
+build:
+  number: 0
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
+
+requirements:
+  build:
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - cmake >=3.15
+    # - patch     # [not win]
+    # - m2-patch  # [win]
+  host:
+    - python
+    - pip
+    - setuptools
+    - wheel
+    - cython >=3.0.0
+    - numpy >=1.21
+    - toml >=0.1
+  run:
+    - numpy >=1.21
+    - python
+
+test:
+  imports:
+    - Pyfhel
+    - Pyfhel.utils
+  requires:
+    - pip
+  commands:
+    - pip check
+
+about:
+  home: https://pyfhel.readthedocs.io
+  license: "GNU General Public v3 (GPLv3)"
+  license_family: GPL3
+  license_file:
+    - LICENSE.txt
+    - Pyfhel/backend/SEAL/LICENSE
+  summary: "Python for Homomorphic Encryption Libraries"
+  doc_url: https://pyfhel.readthedocs.io
+  dev_url: https://github.com/ibarrond/github
+
+extra:
+  recipe-maintainers:
+    - lorepirri
