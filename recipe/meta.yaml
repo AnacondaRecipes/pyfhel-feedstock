@@ -8,20 +8,20 @@ package:
 source:
   url: https://pypi.io/packages/source/{{ name[0]|lower }}/{{ name|lower }}/{{ name }}-{{ version }}.tar.gz
   sha256: fa41664f8815b27f6347821f6363a7516fa84f50570816d8f292f2c22f88f88c
-  # patches:
-  #   - patches/0001-no-system-include.patch
+  patches:
+    - patches/0001-no-system-include.patch
+    - patches/0002-unvendor-seal.patch
 
 build:
   number: 0
-  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
 
 requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - cmake >=3.15
-    # - patch     # [not win]
-    # - m2-patch  # [win]
+    - patch     # [not win]
+    - m2-patch  # [win]
   host:
     - python
     - pip
@@ -30,6 +30,10 @@ requirements:
     - cython >=3.0.0
     - numpy >=1.21
     - toml >=0.1
+    - seal
+    # openmp for win: see the conda_build_config.yaml
+    - llvm-openmp   # [osx]
+    - libgomp       # [linux]
   run:
     - numpy >=1.21
     - python
