@@ -1,14 +1,14 @@
-From 81a5f0feb78127e1060f0ba7474858dc9b74fa93 Mon Sep 17 00:00:00 2001
+From 5b1c80418e9e3ab102f8f48a0cb3e45bac90775b Mon Sep 17 00:00:00 2001
 From: Lorenzo Pirritano <lpirritano@anaconda.com>
-Date: Thu, 21 Mar 2024 21:35:49 -0600
+Date: Wed, 27 Mar 2024 15:49:02 -0600
 Subject: [PATCH] unvendor-seal
 
 ---
- pyproject.toml | 31 +------------------------------
- 1 file changed, 1 insertion(+), 30 deletions(-)
+ pyproject.toml | 37 ++++---------------------------------
+ 1 file changed, 4 insertions(+), 33 deletions(-)
 
 diff --git a/pyproject.toml b/pyproject.toml
-index 1c7579e..5a2b9f7 100644
+index 1c7579e..efbeda7 100644
 --- a/pyproject.toml
 +++ b/pyproject.toml
 @@ -97,35 +97,6 @@ platforms = ["Linux", "Windows", "Darwin"]
@@ -47,15 +47,35 @@ index 1c7579e..5a2b9f7 100644
    #--> Afhel
    [cpplibraries.Afhel]
    mode = 'standard'        # standard/cmake
+@@ -133,8 +104,8 @@ platforms = ["Linux", "Windows", "Darwin"]
+   sources = ['Pyfhel/Afhel/Afseal.cpp',]
+   include_dirs = ['Pyfhel/Afhel',]
+   define_macros = [
+-    # ["SEAL_USE_ZLIB","0"],
+-    # ["SEAL_USE_ZSTD","0"],
++    ["SEAL_USE_ZLIB","1"],
++    ["SEAL_USE_ZSTD","1"],
+   ]
+   extra_compile_args = [
+     {Windows = ["/O2","/std:c++17","/openmp"]},
 @@ -144,7 +115,7 @@ platforms = ["Linux", "Windows", "Darwin"]
      {Windows = []},
      {Darwin = ["-Wl,-rpath,@loader_path/.", "-fopenmp","-Wl,-no_compact_unwind"]},
      {Linux = ["-Wl,-rpath=$ORIGIN/.", "-fopenmp"]} ]
 -  libraries = ['SEAL']
-+  libraries = ['seal-4.1']
++  libraries = ['seal-4.1','z','zstd']
  
  
  #----------------------------- CYTHON EXTENSIONS -------------------------------
+@@ -166,7 +137,7 @@ extra_link_args = [
+   {Darwin = ["-Wl,-rpath,@loader_path/.", "-fopenmp","-Wl,-no_compact_unwind"]},
+   {Linux = ["-Wl,-rpath=$ORIGIN/.", "-fopenmp"]},
+ ]
+-libraries = []  # libraries to link with, cpplibraries above are added by default
++libraries = ['seal-4.1','z','zstd']  # libraries to link with, cpplibraries above are added by default
+ 
+ # List of extensions to compile. Custom compilation config can be defined for each
+ [extensions.Pyfhel]
 -- 
 2.39.1
 

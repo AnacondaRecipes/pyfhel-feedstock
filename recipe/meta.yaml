@@ -14,6 +14,11 @@ source:
 
 build:
   number: 0
+  missing_dso_whitelist:
+    - '*/libc++.1.dylib'  # [osx]
+    - '*/libomp.dylib'    # [osx]
+    - '*/libzstd.so.1'    # [osx]
+    - '*/libz.so.1'       # [osx]
 
 requirements:
   build:
@@ -31,9 +36,10 @@ requirements:
     - numpy >=1.21
     - toml >=0.1
     - seal
-    # openmp for win: see the conda_build_config.yaml
     - llvm-openmp   # [osx]
     - libgomp       # [linux]
+    - zlib {{ zlib }}
+    - zstd {{ zstd }}
   run:
     - numpy >=1.21
     - python
