@@ -15,7 +15,10 @@ source:
 build:
   number: 0
   missing_dso_whitelist:
-    - '*/ld64.so.1'  # [s390x]
+    - '*/ld64.so.1'          # [s390x]
+    - '*/libc++.1.dylib'     # [osx]
+    - '*/libzstd.1.dylib'    # [osx]
+    - '*/libz.1.dylib'       # [osx]
 
 requirements:
   build:
