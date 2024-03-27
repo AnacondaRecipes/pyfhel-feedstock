@@ -14,11 +14,6 @@ source:
 
 build:
   number: 0
-  missing_dso_whitelist:
-    - '*/libc++.1.dylib'  # [osx]
-    - '*/libomp.dylib'    # [osx]
-    - '*/libzstd.so.1'    # [osx]
-    - '*/libz.so.1'       # [osx]
 
 requirements:
   build:
