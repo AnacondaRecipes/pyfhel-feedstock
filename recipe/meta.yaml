@@ -56,13 +56,13 @@ test:
 about:
   home: https://pyfhel.readthedocs.io
   license: "GNU General Public v3 (GPLv3)"
-  license_family: GPL3
+  license_family: GPL-3.0
   license_file:
     - LICENSE.txt
     - Pyfhel/backend/SEAL/LICENSE
   summary: "Python for Homomorphic Encryption Libraries"
   doc_url: https://pyfhel.readthedocs.io
-  dev_url: https://github.com/ibarrond/github
+  dev_url: https://github.com/ibarrond/Pyfhel
 
 extra:
   recipe-maintainers:
