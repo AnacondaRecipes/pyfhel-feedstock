@@ -55,12 +55,16 @@ test:
 
 about:
   home: https://pyfhel.readthedocs.io
-  license: "GNU General Public v3 (GPLv3)"
-  license_family: GPL3
-  license_file:
-    - LICENSE.txt
-    - Pyfhel/backend/SEAL/LICENSE
-  summary: "Python for Homomorphic Encryption Libraries"
+  license: Apache-2.0
+  license_family: Apache
+  license_file: LICENSE.txt
+  summary: Python for Homomorphic Encryption Libraries
+  description: |
+    Python library for Addition, Subtraction, Multiplication and
+    Scalar Product over encrypted integers (BFV/BGV schemes) and
+    approximated floating point values (CKKS scheme). This library
+    acts as an optimized Python API for C++ Homomorphic Encryption
+    libraries.
   doc_url: https://pyfhel.readthedocs.io
   dev_url: https://github.com/ibarrond/Pyfhel
 
