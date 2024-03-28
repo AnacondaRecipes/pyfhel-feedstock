@@ -1,17 +1,32 @@
-From 5b1c80418e9e3ab102f8f48a0cb3e45bac90775b Mon Sep 17 00:00:00 2001
+From 4b8e6bbd9a3c2e01747aa4766a0642ec9f60f29c Mon Sep 17 00:00:00 2001
 From: Lorenzo Pirritano <lpirritano@anaconda.com>
-Date: Wed, 27 Mar 2024 15:49:02 -0600
+Date: Thu, 28 Mar 2024 00:53:56 -0600
 Subject: [PATCH] unvendor-seal
 
 ---
- pyproject.toml | 37 ++++---------------------------------
- 1 file changed, 4 insertions(+), 33 deletions(-)
+ Pyfhel.egg-info/SOURCES.txt |  2 +-
+ pyproject.toml              | 39 +++++--------------------------------
+ setup.py                    |  7 +++++--
+ 3 files changed, 11 insertions(+), 37 deletions(-)
 
+diff --git a/Pyfhel.egg-info/SOURCES.txt b/Pyfhel.egg-info/SOURCES.txt
+index 1469508..564ebdf 100644
+--- a/Pyfhel.egg-info/SOURCES.txt
++++ b/Pyfhel.egg-info/SOURCES.txt
+@@ -4,7 +4,7 @@ README.md
+ pyproject.toml
+ setup.cfg
+ setup.py
+-/Users/alberto.ibarrondo/Technocracy/workspace/Pyfhel/Pyfhel/Afhel/Afseal.cpp
++Pyfhel/Afhel/Afseal.cpp
+ Pyfhel/PyCtxt.pxd
+ Pyfhel/PyCtxt.pyx
+ Pyfhel/PyPoly.pxd
 diff --git a/pyproject.toml b/pyproject.toml
-index 1c7579e..efbeda7 100644
+index 1c7579e..bf7c73d 100644
 --- a/pyproject.toml
 +++ b/pyproject.toml
-@@ -97,35 +97,6 @@ platforms = ["Linux", "Windows", "Darwin"]
+@@ -97,44 +97,15 @@ platforms = ["Linux", "Windows", "Darwin"]
  #------------------------------ C/C++ LIBRARIES --------------------------------
  [cpplibraries]
  
@@ -47,9 +62,10 @@ index 1c7579e..efbeda7 100644
    #--> Afhel
    [cpplibraries.Afhel]
    mode = 'standard'        # standard/cmake
-@@ -133,8 +104,8 @@ platforms = ["Linux", "Windows", "Darwin"]
+   lib_type = 'shared'      # static/shared
    sources = ['Pyfhel/Afhel/Afseal.cpp',]
-   include_dirs = ['Pyfhel/Afhel',]
+-  include_dirs = ['Pyfhel/Afhel',]
++  include_dirs = ['Pyfhel/Afhel']
    define_macros = [
 -    # ["SEAL_USE_ZLIB","0"],
 -    # ["SEAL_USE_ZSTD","0"],
@@ -76,6 +92,31 @@ index 1c7579e..efbeda7 100644
  
  # List of extensions to compile. Custom compilation config can be defined for each
  [extensions.Pyfhel]
+diff --git a/setup.py b/setup.py
+index 02754c4..68d4bc8 100755
+--- a/setup.py
++++ b/setup.py
+@@ -452,7 +452,10 @@ class SuperBuildClib(build_clib):
+                 f.write(f"add_compile_options({extra_c_args})\n")
+             for d in build_info['include_dirs']:
+                 f.write(f"include_directories(\"{d}\")\n")
+-            macros = [f"-d{m[0]}={m[1]}" for m in build_info['macros']]
++            f.write("include_directories(\"$ENV{PREFIX}/Library/include\")\n")
++            f.write("include_directories(\"$ENV{PREFIX}/Library/include/SEAL-4.1\")\n")
++            
++            macros = [f"-D{m[0]}={m[1]}" for m in build_info['macros']]
+             if macros:
+                 f.write(f"add_compile_options({' '.join(macros)})\n")
+             extra_l_args = ' '.join(build_info['extra_link_args'])
+@@ -624,7 +627,7 @@ for ext_name, ext_conf in extensions.items():
+         name            = ext_conf.pop('fullname', f"{project_name}.{ext_name}"),
+         sources         =_npath(_pl(ext_conf.pop('sources', []))),
+         include_dirs    = _path(_pl(ext_conf.pop('include_dirs', [])))      + include_dirs,
+-        define_macros   = _tupl(_pl(ext_conf.pop('include_dirs', [])))      + define_macros,
++        define_macros   = _tupl(_pl(ext_conf.pop('define_macros', [])))      + define_macros,
+         language        = "c++",
+         extra_compile_args=     _pl(ext_conf.pop('extra_compile_args', [])) + extra_compile_args,
+         extra_link_args =       _pl(ext_conf.pop('extra_link_args', []))    + extra_link_args,
 -- 
 2.39.1
 
