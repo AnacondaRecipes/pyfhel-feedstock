@@ -1,0 +1,73 @@
+{% set name = "Pyfhel" %}
+{% set version = "3.4.2" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://pypi.io/packages/source/{{ name[0]|lower }}/{{ name|lower }}/{{ name }}-{{ version }}.tar.gz
+  sha256: fa41664f8815b27f6347821f6363a7516fa84f50570816d8f292f2c22f88f88c
+  patches:
+    - patches/0001-no-system-include.patch
+    - patches/0002-unvendor-seal.patch
+
+build:
+  number: 0
+  missing_dso_whitelist:
+    - '*/ld64.so.1'          # [s390x]
+    - '*/libc++.1.dylib'     # [osx]
+    - '*/libzstd.1.dylib'    # [osx]
+    - '*/libz.1.dylib'       # [osx]
+
+requirements:
+  build:
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - cmake >=3.15
+    - patch     # [not win]
+    - m2-patch  # [win]
+  host:
+    - python
+    - pip
+    - setuptools
+    - wheel
+    - cython >=3.0.0
+    - numpy >=1.21
+    - toml >=0.1
+    - seal
+    - llvm-openmp   # [osx]
+    - libgomp       # [linux]
+    - zlib {{ zlib }}
+    - zstd {{ zstd }}
+  run:
+    - numpy >=1.21
+    - python
+
+test:
+  imports:
+    - Pyfhel
+    - Pyfhel.utils
+  requires:
+    - pip
+  commands:
+    - pip check
+
+about:
+  home: https://pyfhel.readthedocs.io
+  license: Apache-2.0
+  license_family: Apache
+  license_file: LICENSE.txt
+  summary: Python for Homomorphic Encryption Libraries
+  description: |
+    Python library for Addition, Subtraction, Multiplication and
+    Scalar Product over encrypted integers (BFV/BGV schemes) and
+    approximated floating point values (CKKS scheme). This library
+    acts as an optimized Python API for C++ Homomorphic Encryption
+    libraries.
+  doc_url: https://pyfhel.readthedocs.io
+  dev_url: https://github.com/ibarrond/Pyfhel
+
+extra:
+  recipe-maintainers:
+    - lorepirri

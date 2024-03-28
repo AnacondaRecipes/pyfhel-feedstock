@@ -1,0 +1,25 @@
+From bf16dca1bbe48f5684b78f9ba2a058b955ed01e1 Mon Sep 17 00:00:00 2001
+From: Lorenzo Pirritano <lpirritano@anaconda.com>
+Date: Tue, 19 Mar 2024 07:58:17 -0600
+Subject: [PATCH] no-system-include
+
+---
+ pyproject.toml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/pyproject.toml b/pyproject.toml
+index 5f8b346..1c7579e 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -150,7 +150,7 @@ platforms = ["Linux", "Windows", "Darwin"]
+ #----------------------------- CYTHON EXTENSIONS -------------------------------
+ [extensions.config]   # Common compilation config for all extensions
+ include_dirs = [
+-    {Darwin = ["/usr/local/include"]},
++    {Darwin = []},
+ ]
+ define_macros = [
+   ["NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION"],
+-- 
+2.39.1
+
