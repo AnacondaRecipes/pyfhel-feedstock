@@ -6,8 +6,8 @@ package:
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0]|lower }}/{{ name|lower }}/{{ name }}-{{ version }}.tar.gz
-  sha256: fa41664f8815b27f6347821f6363a7516fa84f50570816d8f292f2c22f88f88c
+  url: https://github.com/ibarrond/Pyfhel/archive/refs/tags/v{{ version }}.tar.gz
+  sha256: 37825ce03a54e7ca9e2d39f6fd4bf19e4d58ec28cd856fe4d7a0fef4cefed5bf
   patches:
     - patches/0001-no-system-include.patch
     - patches/0002-unvendor-seal.patch
@@ -53,8 +53,14 @@ test:
     - Pyfhel.utils
   requires:
     - pip
+    - pytest
+  source_files:
+    - Pyfhel/test
+    - examples
+    - pyproject.toml
   commands:
     - pip check
+    - pytest -v .
 
 about:
   home: https://pyfhel.readthedocs.io
