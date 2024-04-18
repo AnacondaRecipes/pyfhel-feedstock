@@ -40,7 +40,7 @@ requirements:
     - setuptools
     - wheel
     - cython >=3.0.0
-    - numpy >=1.21
+    - numpy {{ numpy }}
     - toml >=0.1
     - seal
     - llvm-openmp   # [osx]
