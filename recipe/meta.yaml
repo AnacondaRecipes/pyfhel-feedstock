@@ -17,7 +17,6 @@ build:
   # osx gives a python Abort trap: 6 on tests, for more info
   # have a look at:
   # https://github.com/AnacondaRecipes/pyfhel-feedstock/pull/1
-  skip: true  # [osx]
   # win builds, but can't import Pyfhel, something is missing.
   # On the next update it should be investigated and completed.
   skip: true  # [win]
