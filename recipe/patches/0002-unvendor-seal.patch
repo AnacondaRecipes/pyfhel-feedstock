@@ -1,0 +1,110 @@
+From 94c1830eada73a3e856da0e06e47d75b800cc8b2 Mon Sep 17 00:00:00 2001
+From: Lorenzo Pirritano <lpirritano@anaconda.com>
+Date: Wed, 17 Apr 2024 07:57:25 -0600
+Subject: [PATCH 2/2] unvendor-seal
+
+---
+ pyproject.toml | 39 +++++----------------------------------
+ setup.py       |  8 ++++++--
+ 2 files changed, 11 insertions(+), 36 deletions(-)
+
+diff --git a/pyproject.toml b/pyproject.toml
+index 1c7579e..bc99ff5 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -96,45 +96,16 @@ platforms = ["Linux", "Windows", "Darwin"]
+ # - Libs in mode 'standard' are compiled using the default platform compiler.
+ #------------------------------ C/C++ LIBRARIES --------------------------------
+ [cpplibraries]
+-
+-  #--> SEAL
+-  [cpplibraries.SEAL]
+-  mode = 'cmake'              # standard/cmake
+-  lib_type = 'static'         # static/shared
+-  # source_dir: dir with the top CMakeLists.txt.
+-  source_dir = 'Pyfhel/backend/SEAL'
+-  include_dirs = [
+-    'Pyfhel/backend/SEAL/native/src',
+-    'Pyfhel/backend/SEAL/thirdparty/msgsl-src/include'
+-  ]
+-
+-  ## Build-relative dirs:
+-  #  -> paths are relative to build directory.
+-  # built_library_dir: output dir containing the cmake-built libs
+-  built_library_dir='lib' 
+-  # built_include_dirs: dirs with cmake-built headers.
+-  built_include_dirs=['native/src', 'thirdparty/msgsl-src/include']
+-
+-  ## CMake options: https://github.com/microsoft/SEAL/#basic-cmake-options
+-    [cpplibraries.SEAL.cmake_opts]
+-    CMAKE_BUILD_TYPE = 'Release'
+-    SEAL_USE_INTEL_HEXL ='OFF'   # ON/OFF, use Intel HEXL for low-level kernels
+-    SEAL_USE_ALIGNED_ALLOC ='OFF'# ON/OFF, 64B aligned memory allocations, better perf with Intel HEXL.
+-    BUILD_SHARED_LIBS ='OFF'     # ON/OFF, build shared and not static library
+-    SEAL_THROW_ON_TRANSPARENT_CIPHERTEXT='ON' # ON/OFF, runtime error when multiplying a ctxt with a zeroed plaintext.
+-    SEAL_USE_MSGSL = 'ON'       # ON/OFF,	Build with Microsoft GSL support.
+-    SEAL_USE_ZLIB	= 'ON'        # ON/OFF,	Build with ZLIB support.
+-    SEAL_USE_ZSTD	= 'ON'        # ON/OFF,	Build with Zstandard support.
+     
+   #--> Afhel
+   [cpplibraries.Afhel]
+   mode = 'standard'        # standard/cmake
+   lib_type = 'shared'      # static/shared
+   sources = ['Pyfhel/Afhel/Afseal.cpp',]
+-  include_dirs = ['Pyfhel/Afhel',]
++  include_dirs = ['Pyfhel/Afhel']
+   define_macros = [
+-    # ["SEAL_USE_ZLIB","0"],
+-    # ["SEAL_USE_ZSTD","0"],
++    ["SEAL_USE_ZLIB","1"],
++    ["SEAL_USE_ZSTD","1"],
+   ]
+   extra_compile_args = [
+     {Windows = ["/O2","/std:c++17","/openmp"]},
+@@ -144,7 +115,7 @@ platforms = ["Linux", "Windows", "Darwin"]
+     {Windows = []},
+     {Darwin = ["-Wl,-rpath,@loader_path/.", "-fopenmp","-Wl,-no_compact_unwind"]},
+     {Linux = ["-Wl,-rpath=$ORIGIN/.", "-fopenmp"]} ]
+-  libraries = ['SEAL']
++  libraries = ['seal-4.1','z','zstd']
+ 
+ 
+ #----------------------------- CYTHON EXTENSIONS -------------------------------
+@@ -166,7 +137,7 @@ extra_link_args = [
+   {Darwin = ["-Wl,-rpath,@loader_path/.", "-fopenmp","-Wl,-no_compact_unwind"]},
+   {Linux = ["-Wl,-rpath=$ORIGIN/.", "-fopenmp"]},
+ ]
+-libraries = []  # libraries to link with, cpplibraries above are added by default
++libraries = ['seal-4.1','z','zstd']  # libraries to link with, cpplibraries above are added by default
+ 
+ # List of extensions to compile. Custom compilation config can be defined for each
+ [extensions.Pyfhel]
+diff --git a/setup.py b/setup.py
+index 02754c4..dd24581 100755
+--- a/setup.py
++++ b/setup.py
+@@ -452,7 +452,11 @@ class SuperBuildClib(build_clib):
+                 f.write(f"add_compile_options({extra_c_args})\n")
+             for d in build_info['include_dirs']:
+                 f.write(f"include_directories(\"{d}\")\n")
+-            macros = [f"-d{m[0]}={m[1]}" for m in build_info['macros']]
++
++            f.write("include_directories(\"$ENV{PREFIX}/Library/include\")\n")
++            f.write("include_directories(\"$ENV{PREFIX}/Library/include/SEAL-4.1\")\n")
++            
++            macros = [f"-D{m[0]}={m[1]}" for m in build_info['macros']]
+             if macros:
+                 f.write(f"add_compile_options({' '.join(macros)})\n")
+             extra_l_args = ' '.join(build_info['extra_link_args'])
+@@ -624,7 +628,7 @@ for ext_name, ext_conf in extensions.items():
+         name            = ext_conf.pop('fullname', f"{project_name}.{ext_name}"),
+         sources         =_npath(_pl(ext_conf.pop('sources', []))),
+         include_dirs    = _path(_pl(ext_conf.pop('include_dirs', [])))      + include_dirs,
+-        define_macros   = _tupl(_pl(ext_conf.pop('include_dirs', [])))      + define_macros,
++        define_macros   = _tupl(_pl(ext_conf.pop('define_macros', [])))      + define_macros,
+         language        = "c++",
+         extra_compile_args=     _pl(ext_conf.pop('extra_compile_args', [])) + extra_compile_args,
+         extra_link_args =       _pl(ext_conf.pop('extra_link_args', []))    + extra_link_args,
+-- 
+2.39.1
+
